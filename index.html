@@ -328,15 +328,16 @@
   @media (max-width: 900px) { .two-col { grid-template-columns: 1fr !important; } }
   /* ── Sync modal ── */
   .modal-bg {
-    display: none; position: fixed; inset: 0; z-index: 200;
-    background: rgba(0,0,0,.65); backdrop-filter: blur(4px);
-    align-items: center; justify-content: center;
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 9999;
+    background: rgba(0,0,0,.72);
+    align-items: flex-start; justify-content: center;
+    overflow-y: auto; padding: 40px 16px;
   }
   .modal-bg.open { display: flex; }
   .modal {
     background: var(--bg2); border: 1px solid var(--border2);
-    border-radius: 16px; padding: 28px; width: 100%; max-width: 420px;
-    margin: 16px;
+    border-radius: 16px; padding: 28px; width: 100%; max-width: 440px;
+    margin: auto; position: relative;
   }
   .modal h2 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
   .modal p  { font-size: 13px; color: var(--text2); margin-bottom: 18px; line-height: 1.7; }
@@ -1506,11 +1507,18 @@ function enableSyncButtons(on) {
 
 // ── Modal ───────────────────────────────────────────────
 function openSyncModal() {
-  document.getElementById('sync-modal-bg').classList.add('open');
+  const bg = document.getElementById('sync-modal-bg');
+  bg.classList.add('open');
+  bg.scrollTop = 0;
+  window.scrollTo(0,0);
   if(syncCfg) {
     document.getElementById('sync-key-input').value = syncCfg.masterKey || '';
     document.getElementById('sync-bin-input').value = syncCfg.binId    || '';
     document.getElementById('sync-pass-input').value = syncCfg.passphrase || '';
+  }
+  if(syncCfg && syncCfg.binId) {
+    const disp = document.getElementById('sync-binid-display');
+    if(disp) { disp.style.display='block'; document.getElementById('sync-binid-val').textContent = syncCfg.binId; }
   }
 }
 function closeSyncModal() {
