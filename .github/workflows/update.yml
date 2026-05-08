@@ -3,19 +3,21 @@ name: Update Dashboard
 on:
   workflow_dispatch:
     inputs:
-      content:
-        description: 'Base64 encoded index.html content'
+      file_url:
+        description: 'URL to download index.html from'
         required: true
         type: string
 
 jobs:
   update:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
-      - name: Write new index.html
-        run: echo "${{ github.event.inputs.content }}" | base64 -d > index.html
+      - name: Download new index.html
+        run: curl -L -o index.html "${{ github.event.inputs.file_url }}"
 
       - name: Commit and push
         run: |
