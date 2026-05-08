@@ -44,6 +44,7 @@
     position: sticky; top: 0; height: 100vh;
     display: flex; flex-direction: column;
     overflow-y: auto;
+    overflow-x: visible;
   }
   .logo {
     padding: 0 20px 24px;
@@ -1094,7 +1095,6 @@ function loadFXInputs() {
 }
 
 // ─── Bank Accounts ────────────────────────────────────────
-let banks = JSON.parse(localStorage.getItem('banks') || '[]');
 function saveBanks() { localStorage.setItem('banks', JSON.stringify(banks)); autoPush(); }
 function toggleBankForm() {
   const f = document.getElementById('bank-form');
@@ -1507,10 +1507,13 @@ function enableSyncButtons(on) {
 
 // ── Modal ───────────────────────────────────────────────
 function openSyncModal() {
-  const bg = document.getElementById('sync-modal-bg');
-  bg.classList.add('open');
-  bg.scrollTop = 0;
-  window.scrollTo(0,0);
+  // 確保 modal 在 body 最頂層，不被任何 overflow 容器裁切
+  const modal = document.getElementById('sync-modal-bg');
+  if (modal.parentElement !== document.body) {
+    document.body.appendChild(modal);
+  }
+  modal.classList.add('open');
+  modal.scrollTop = 0;
   if(syncCfg) {
     document.getElementById('sync-key-input').value = syncCfg.masterKey || '';
     document.getElementById('sync-bin-input').value = syncCfg.binId    || '';
